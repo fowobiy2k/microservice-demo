@@ -5,6 +5,7 @@ import com.microservice.library.dto.NewMemberRequest;
 import com.microservice.library.dto.NewMemberResponse;
 import com.microservice.library.model.Member;
 import com.microservice.library.repository.MemberRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,12 +13,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class MemberService {
 
     @Autowired
     private MemberRepository memberRepository;
 
     public NewMemberResponse addNewMember(NewMemberRequest request){
+        log.info("creating new member");
         NewMemberResponse response = new NewMemberResponse();
 
         Member member = Member.builder()
@@ -27,6 +30,7 @@ public class MemberService {
 
         memberRepository.save(member);
         response.setMessage("new library membership created successfully");
+        log.info("new member created successfully");
 
         return response;
     }

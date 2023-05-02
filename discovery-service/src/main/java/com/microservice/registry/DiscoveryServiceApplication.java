@@ -1,14 +1,14 @@
-package com.microservice.affairs;
+package com.microservice.registry;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 
 @SpringBootApplication
-@EnableEurekaClient
-public class StudentAffairsApplication {
+@EnableEurekaServer
+public class DiscoveryServiceApplication {
     public static void main(String[] args) {
-        SpringApplication.run(StudentAffairsApplication.class, args);
+        SpringApplication.run(DiscoveryServiceApplication.class, args);
     }
 }
