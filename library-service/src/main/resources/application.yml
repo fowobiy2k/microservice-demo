@@ -1,0 +1,12 @@
+server:
+  port: 9003
+
+spring:
+  datasource:
+    username: newuser
+    password: password
+    url: jdbc:mysql://localhost:3406/libraryservicedb?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate:
+      ddl-auto: update
