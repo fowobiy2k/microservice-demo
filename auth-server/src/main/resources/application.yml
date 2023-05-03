@@ -1,19 +1,19 @@
 server:
-  port: 9003
+  port: 9004
 
 spring:
   application:
-    name: library-service
+    name: auth-server
   datasource:
     username: newuser
     password: password
-    url: jdbc:mysql://localhost:3406/libraryservicedb?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3406/authserverdb?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
   jpa:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate:
       ddl-auto: update
 
-#Eureka client discovery configuration
+  #Eureka client discovery configuration
   eureka:
     client:
       service-url:

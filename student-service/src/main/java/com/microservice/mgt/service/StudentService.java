@@ -74,7 +74,7 @@ public class StudentService {
                                 .level(savedStudent.getLevel())
                                         .build();
 
-        log.info("sending member creation request to library");
+        log.info("sending member creation request to library at {}", libraryServiceUrl);
         NewMemberResponse libraryResponse = webClientBuilder.build().post()
                         .uri(libraryServiceUrl)
                 .body(Mono.just(libraryMemberRequest), NewMemberRequest.class)
