@@ -4,6 +4,7 @@ import com.microservice.mgt.dto.NewStudentRequest;
 import com.microservice.mgt.dto.StudentResponse;
 import com.microservice.mgt.model.Student;
 import com.microservice.mgt.reposiotry.StudentRepository;
+import com.microservice.mgt.utilities.GenerateTokenRequest;
 import com.microservice.mgt.utilities.NewMemberRequest;
 import com.microservice.mgt.utilities.NewMemberResponse;
 import com.microservice.mgt.utilities.StudentRequest;
@@ -20,7 +21,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 @Slf4j
 public class StudentService {
 
@@ -36,6 +36,17 @@ public class StudentService {
     @Value("${library.service.url}")
     private String libraryServiceUrl;
 
+    @Value("${auth.generate.token}")
+    private String tokenGenerationUrl;
+
+    @Value("${auth.generate.token.username}")
+    private String username;
+
+    @Value("${auth.generate.token.password}")
+    private String password;
+
+
+
     public String enrolNewStudent(NewStudentRequest request){
         Student student = Student.builder()
                 .firstname(request.getFirstname())
@@ -49,6 +60,21 @@ public class StudentService {
         Student savedStudent = repository.save(student);
         log.info("new student saved to database");
 
+        GenerateTokenRequest tokenRequest = GenerateTokenRequest.builder()
+                .password(password)
+                .username(username)
+                .build();
+
+        log.info("generating token");
+        String token = webClientBuilder.build().post()
+                .uri(tokenGenerationUrl)
+                .body(Mono.just(tokenRequest), GenerateTokenRequest.class)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
+        log.info("token generated successfully: {}", token);
+
         log.info("preparing to send user creation request to student affairs ");
         StudentRequest studentRequest = StudentRequest.builder()
                         .studentReg(savedStudent.getId())
@@ -57,9 +83,11 @@ public class StudentService {
                                                 .lastname(savedStudent.getLastname())
                                                         .build();
 
+
         log.info("sending user creation request to student affairs");
         String studentAffairsResponse = webClientBuilder.build().post()
                 .uri(studentAffairsUrl)
+                .header("Authorization", token)
                 .body(Mono.just(studentRequest), StudentRequest.class)
                 .retrieve()
                 .onStatus(HttpStatus.INTERNAL_SERVER_ERROR::equals, response -> response.bodyToMono(String.class).map(Exception::new))
@@ -77,6 +105,7 @@ public class StudentService {
         log.info("sending member creation request to library at {}", libraryServiceUrl);
         NewMemberResponse libraryResponse = webClientBuilder.build().post()
                         .uri(libraryServiceUrl)
+                .header("Authorization", token)
                 .body(Mono.just(libraryMemberRequest), NewMemberRequest.class)
                                 .retrieve()
                                         .bodyToMono(NewMemberResponse.class)

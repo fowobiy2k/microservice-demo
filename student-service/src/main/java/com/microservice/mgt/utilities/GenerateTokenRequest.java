@@ -1,0 +1,14 @@
+package com.microservice.mgt.utilities;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class GenerateTokenRequest {
+    private String username, password;
+}
